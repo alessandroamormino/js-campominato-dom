@@ -164,6 +164,9 @@ btnGenerateEl.addEventListener('click', function(){
 
     // Genero le bombe
     bombs = createBombs(bombs, caselleTot);
+    
+    // stampo in console la posizione delle bombe per barare :)
+    console.log(bombs);
 
 
     // - setto la width del contenitore della griglia con la formula calc(50px * numero caselle per riga);
