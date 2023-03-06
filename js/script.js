@@ -185,12 +185,8 @@ btnGenerateEl.addEventListener('click', function(){
 
             // ? SE il numero della cella è presente nella lista dei numeri generati (bombe)
             if(bombs.includes(currentCell)){
-
-                // - stampo in console il numero della cella cliccata
-                console.log(`Hai cliccato la cella n. ${currentCell}`);
-
                 // ° V1: Assegno alla cella cliccata una classe "bomb" che la colora di rosso
-                cella.classList.add('bomb');
+                returnCell(cella).classList.add('bomb');
 
                 // ° V2: Termina la partita
                 isFinished = true;
@@ -200,30 +196,26 @@ btnGenerateEl.addEventListener('click', function(){
                 if(!selectedCells.includes(currentCell)){
                     selectedCells.push(currentCell);
     
-                    // - stampo in console il numero della cella cliccata
-                    console.log(`Hai cliccato la cella n. ${currentCell}`);
-    
                     // - assegno all'elemento una classe che la colorerà di azzurro 
-                    cella.classList.add('light-blue');
-    
+                    returnCell(cella).classList.add('light-blue');
+
+                    // incremento i punti
                     points++;
-                    console.log(`Punteggio attuale: ${points}`);
     
                     // Controllo se ho cliccato tutte le celle senza bombe
-                    
                     if(selectedCells.length==caselleTot-bombs.length){
                         // Stampo che ho vinto + punteggio
                         isFinished = true;
                     }
                 } else {
-                    console.log(`Hai già cliccato la cella ${currentCell}`);
+                    messageEl.innerText = `Hai già cliccato la cella ${currentCell}`;
                 }
 
             }
 
             // Controllo se la partita è terminata
             if (isFinished){
-                gameOver(invisibleLayerEl, isLost, points, btnNewGameEl);
+                gameOver(invisibleLayerEl, isLost, points, btnNewGameEl, messageEl);
                 // Superbonus: mostro le celle che avevano le bombe
                 showBombs(allCells, bombs);
             }
@@ -308,7 +300,16 @@ function createBombs(myArray, numOfCell){
 
 
 
-function gameOver(layer, isLost, points, btn){
+/**
+ * Mostra nel DOM il layer invisibile che impedisce di cliccare altre celle, mostra il bottone di nuova partita e stampa il messaggio se hai vinto o perso
+ * @param {HTMLElement} layer
+ * @param {boolean} isLost
+ * @param {number} points
+ * @param {HTMLElement} btn
+ * @param {HTMLElement} text
+ * @returns {any}
+ */
+function gameOver(layer, isLost, points, btn, text){
     // Mostro nel DOM il mio layer invisibile che impedisca di cliccare altre celle
     layer.style.display = 'flex';
 
@@ -317,16 +318,35 @@ function gameOver(layer, isLost, points, btn){
 
     // Stampo il messaggio con il punteggio
     if(isLost){
-        messageEl.innerText = `Hai perso, il tuo punteggio è ${points}`;
+        text.innerText = `Hai perso, il tuo punteggio è ${points}`;
     }else{
-        messageEl.innerText = `Hai vinto, il tuo punteggio è ${points}`;
+        text.innerText = `Hai vinto, il tuo punteggio è ${points}`;
     }
 }
 
 
 
+/**
+ * Aggiunge la classe bomb a tutte le celle che contengono le bombe
+ * @param {Array} arr1
+ * @param {Array} arr2
+ * @returns {any}
+ */
 function showBombs(arr1, arr2){
     for(let i=0; i<arr2.length; i++){
         arr1[arr2[i]-1].classList.add('bomb');
     }
+}
+
+
+/**
+ * Stampa in console la cella cliccata e restituisce l'elemento cella
+ * @param {any} cell
+ * @returns {HTMLElement}
+ */
+function returnCell(cell){
+    // - stampo in console il numero della cella cliccata
+    console.log(`Hai cliccato la cella n. ${cell}`);
+
+    return cell;
 }
