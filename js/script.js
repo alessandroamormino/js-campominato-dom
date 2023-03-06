@@ -100,6 +100,18 @@ let points = 0;
 // Creo variabile per capire se ho terminato la partita
 let isFinished = false;
 
+// Creo una variabile per capire se ho perso
+let isLost = false;
+
+// Leggo il layer invisibile
+const invisibleLayerEl = document.getElementById('invisible-layer');
+
+// Leggo il contenitore del messaggio per stampare il punteggio finale
+let messageEl = document.getElementById('message');
+
+// Creo un array contenente le celle selezionate durante la partita
+const selectedCells = [];
+
 
 
 
@@ -151,9 +163,12 @@ btnGenerateEl.addEventListener('click', function(){
     // - setto la width del contenitore della griglia con la formula calc(50px * numero caselle per riga);
     gridContainerEl.style.width = `calc(80px * ${casellePerRiga})`;
 
+    invisibleLayerEl.style.width = `calc(80px * ${casellePerRiga})`;
+    invisibleLayerEl.style.height = `calc(80px * ${casellePerRiga})`;
+
     while(i<caselleTot){
         // memorizzo una variabile contatore
-        let selectedCell = i + 1;
+        let currentCell = i + 1;
 
         let cella = createSquare(i+1);
         
@@ -161,35 +176,46 @@ btnGenerateEl.addEventListener('click', function(){
         cella.addEventListener('click', function(){
 
             // ? SE il numero della cella è presente nella lista dei numeri generati
-            if(bombs.includes(selectedCell)){
+            if(bombs.includes(currentCell)){
 
                 // - stampo in console il numero della cella cliccata
-                console.log(`Hai cliccato la cella n. ${selectedCell}`);
+                console.log(`Hai cliccato la cella n. ${currentCell}`);
 
                 // ° V1: Assegno alla cella cliccata una classe "bomb" che la colora di rosso
                 cella.classList.add('bomb');
 
                 // ° V2: Termina la partita
                 isFinished = true;
-
-                // ° V3: Stampo il conteggio
-                console.log(`Mi dispiace, hai perso, il tuo punteggio è: ${points}`)
+                isLost = true;
 
             } else {
 
+                selectedCells.push(currentCell);
+
                 // - stampo in console il numero della cella cliccata
-                console.log(`Hai cliccato la cella n. ${selectedCell}`);
+                console.log(`Hai cliccato la cella n. ${currentCell}`);
 
                 // - assegno all'elemento una classe che la colorerà di azzurro 
                 cella.classList.add('light-blue');
 
                 points++;
                 console.log(`Punteggio attuale: ${points}`);
+
+                // Controllo se ho cliccato tutte le celle senza bombe
+                
+                if(selectedCells.length==caselleTot-bombs.length){
+                    // Stampo che ho vinto + punteggio
+                    isFinished = true;
+                }
+
             }
 
+            // Controllo se la partita è terminata
+            if (isFinished){
+                gameOver(invisibleLayerEl, isLost, points);
+            }
 
-
-        });
+        });    
 
 
         // - Appendo ogni <div> al contenitore letto dal DOM
@@ -263,5 +289,17 @@ function createBombs(myArray, numOfCell){
         }
 
         countBombs++;
+    }
+}
+
+function gameOver(layer, isLost, points){
+    // Stampo nel DOM il mio layer invisibile che impedisca di cliccare altre celle
+    layer.style.display = 'flex';
+
+    // Stampo il messaggio con il punteggio
+    if(isLost){
+        messageEl.innerText = `Hai perso, il tuo punteggio è ${points}`;
+    }else{
+        messageEl.innerText = `Hai vinto, il tuo punteggio è ${points}`;
     }
 }
