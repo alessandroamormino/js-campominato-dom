@@ -118,6 +118,9 @@ btnGenerateEl.addEventListener('click', function(){
     // - dichiaro variabile numero caselle per riga
     let casellePerRiga;
 
+    // Azzero il punteggio
+    points = 0;
+
 
     // Bonus: Seleziono la modalità
     if(mode=='hard'){
@@ -141,22 +144,8 @@ btnGenerateEl.addEventListener('click', function(){
     }
 
 
-    // Popolo l'array con le 16 bombe
-    let countBombs = 0;
-
-    // Azzero il punteggio
-    points = 0;
-
-    while(bombs.length < 16){
-        let newBomb = randomNumber(1, caselleTot);
-
-        if(!bombs.includes(newBomb)){
-            bombs.push(newBomb);
-        }
-
-        countBombs++;
-    }
-    console.log(bombs);
+    // Genero le bombe
+    createBombs(bombs, caselleTot);
 
     
     // - setto la width del contenitore della griglia con la formula calc(50px * numero caselle per riga);
@@ -257,5 +246,22 @@ function checkEvenOdd(num){
         return true;
     } else {
         return false;
+    }
+}
+
+// CREATE BOMBS
+
+function createBombs(myArray, numOfCell){
+    // Popolo l'array con le 16 bombe
+    let countBombs = 0;
+
+    while(myArray.length < 16){
+        let newBomb = randomNumber(1, numOfCell);
+
+        if(!myArray.includes(newBomb)){
+            myArray.push(newBomb);
+        }
+
+        countBombs++;
     }
 }
