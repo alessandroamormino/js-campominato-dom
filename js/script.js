@@ -189,23 +189,26 @@ btnGenerateEl.addEventListener('click', function(){
                 isLost = true;
 
             } else {
-
-                selectedCells.push(currentCell);
-
-                // - stampo in console il numero della cella cliccata
-                console.log(`Hai cliccato la cella n. ${currentCell}`);
-
-                // - assegno all'elemento una classe che la colorerà di azzurro 
-                cella.classList.add('light-blue');
-
-                points++;
-                console.log(`Punteggio attuale: ${points}`);
-
-                // Controllo se ho cliccato tutte le celle senza bombe
-                
-                if(selectedCells.length==caselleTot-bombs.length){
-                    // Stampo che ho vinto + punteggio
-                    isFinished = true;
+                if(!selectedCells.includes(currentCell)){
+                    selectedCells.push(currentCell);
+    
+                    // - stampo in console il numero della cella cliccata
+                    console.log(`Hai cliccato la cella n. ${currentCell}`);
+    
+                    // - assegno all'elemento una classe che la colorerà di azzurro 
+                    cella.classList.add('light-blue');
+    
+                    points++;
+                    console.log(`Punteggio attuale: ${points}`);
+    
+                    // Controllo se ho cliccato tutte le celle senza bombe
+                    
+                    if(selectedCells.length==caselleTot-bombs.length){
+                        // Stampo che ho vinto + punteggio
+                        isFinished = true;
+                    }
+                } else {
+                    console.log(`Hai già cliccato la cella ${currentCell}`);
                 }
 
             }
