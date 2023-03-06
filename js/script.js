@@ -92,7 +92,7 @@ const gridContainerEl = document.getElementById('grid-container');
 const selectModeEl = document.getElementById('mode');
 
 // - creo un array di 16 numeri casuali diversi, queste saranno le posizioni delle bombe nella griglia
-const bombs = [];
+let bombs = [];
 
 // creo una variabile per il punteggio
 let points = 0;
@@ -106,11 +106,17 @@ let isLost = false;
 // Leggo il layer invisibile
 const invisibleLayerEl = document.getElementById('invisible-layer');
 
+// Leggo il bottone per la nuova partita
+const btnNewGameEl = document.getElementById('new-game')
+
 // Leggo il contenitore del messaggio per stampare il punteggio finale
 let messageEl = document.getElementById('message');
 
 // Creo un array contenente le celle selezionate durante la partita
 const selectedCells = [];
+
+// Creo un array con tutte le celle create
+const allCells = [];
 
 
 
@@ -157,9 +163,9 @@ btnGenerateEl.addEventListener('click', function(){
 
 
     // Genero le bombe
-    createBombs(bombs, caselleTot);
+    bombs = createBombs(bombs, caselleTot);
 
-    
+
     // - setto la width del contenitore della griglia con la formula calc(50px * numero caselle per riga);
     gridContainerEl.style.width = `calc(80px * ${casellePerRiga})`;
 
@@ -171,11 +177,13 @@ btnGenerateEl.addEventListener('click', function(){
         let currentCell = i + 1;
 
         let cella = createSquare(i+1);
+        allCells.push(cella);
+
         
         // - AL CLICK della cella:
         cella.addEventListener('click', function(){
 
-            // ? SE il numero della cella è presente nella lista dei numeri generati
+            // ? SE il numero della cella è presente nella lista dei numeri generati (bombe)
             if(bombs.includes(currentCell)){
 
                 // - stampo in console il numero della cella cliccata
@@ -215,7 +223,9 @@ btnGenerateEl.addEventListener('click', function(){
 
             // Controllo se la partita è terminata
             if (isFinished){
-                gameOver(invisibleLayerEl, isLost, points);
+                gameOver(invisibleLayerEl, isLost, points, btnNewGameEl);
+                // Superbonus: mostro le celle che avevano le bombe
+                showBombs(allCells, bombs);
             }
 
         });    
@@ -228,9 +238,17 @@ btnGenerateEl.addEventListener('click', function(){
         i++;
     }
 
-
-
 });
+
+// Nuova partita
+btnNewGameEl.addEventListener('click', function(){
+    document.location.reload();
+});
+
+
+
+
+
 
 
 
@@ -263,23 +281,14 @@ function randomNumber(min, max){
     return Math.floor(Math.random()* (max - min + 1) + min);
 }
 
-// PARI O DISPARI
-/**
- * Controlla se il numero passato come parametro è pari o dispari
- * se pari restituisce true, se dispari restituisce false
- * @param {number} num
- * @returns {boolean} true|false
- */
-function checkEvenOdd(num){
-    if(num % 2 == 0){
-        return true;
-    } else {
-        return false;
-    }
-}
-
 // CREATE BOMBS
 
+/**
+ * Popola un array di 16 elementi con numeri casuali diversi tra loro
+ * @param {any} myArray
+ * @param {any} numOfCell
+ * @returns {any} myArray
+ */
 function createBombs(myArray, numOfCell){
     // Popolo l'array con le 16 bombe
     let countBombs = 0;
@@ -293,16 +302,31 @@ function createBombs(myArray, numOfCell){
 
         countBombs++;
     }
+
+    return myArray;
 }
 
-function gameOver(layer, isLost, points){
-    // Stampo nel DOM il mio layer invisibile che impedisca di cliccare altre celle
+
+
+function gameOver(layer, isLost, points, btn){
+    // Mostro nel DOM il mio layer invisibile che impedisca di cliccare altre celle
     layer.style.display = 'flex';
+
+    // Mostro nel DOM il mio bottone per la nuova partita
+    btn.style.display = 'block';
 
     // Stampo il messaggio con il punteggio
     if(isLost){
         messageEl.innerText = `Hai perso, il tuo punteggio è ${points}`;
     }else{
         messageEl.innerText = `Hai vinto, il tuo punteggio è ${points}`;
+    }
+}
+
+
+
+function showBombs(arr1, arr2){
+    for(let i=0; i<arr2.length; i++){
+        arr1[arr2[i]-1].classList.add('bomb');
     }
 }
