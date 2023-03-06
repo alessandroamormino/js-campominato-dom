@@ -13,6 +13,9 @@
     background-color: #eca72c;
     font-size: 1.2em;
 }
+.bomb {
+    background-color: red;
+}
 /* /Assets */
 
 body{

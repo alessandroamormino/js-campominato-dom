@@ -47,6 +47,35 @@ x creo variabile numero caselle per riga
 x uso questa variabile nel ciclo che uso per generare le caselle per determinare il numero
 x setto la width del contenitore della griglia con la formula calc(50px * numero caselle per riga);
 
+
+CONSEGNA DOM: 
+
+Il computer deve generare 16 numeri casuali nello stesso range della difficoltà prescelta: le bombe. Attenzione: nella stessa cella può essere posizionata al massimo una bomba, perciò nell’array delle bombe non potranno esserci due numeri uguali.
+In seguito l'utente clicca su una cella: se il numero è presente nella lista dei numeri generati - abbiamo calpestato una bomba - la cella si colora di rosso e la partita termina. Altrimenti la cella cliccata si colora di azzurro e l'utente può continuare a cliccare sulle altre celle.
+La partita termina quando il giocatore clicca su una bomba o quando raggiunge il numero massimo possibile di numeri consentiti (ovvero quando ha rivelato tutte le celle che non sono bombe).
+Al termine della partita il software deve comunicare il punteggio, cioè il numero di volte che l’utente ha cliccato su una cella che non era una bomba.
+
+SUPERBONUS: 
+Quando si clicca su una bomba e finisce la partita, il software scopre tutte le bombe nascoste.
+
+
+PSEUDOCODE: 
+
+- AL CLICK DELLA CELLA
+    x creo un array di 16 numeri casuali diversi, queste saranno le posizioni delle bombe nella griglia.
+    x creo una variabile per il punteggio
+    ? SE il numero della cella è presente nella lista dei numeri generati
+        ° V1: Assegno alla cella cliccata una classe "bomb" che la colora di rosso
+        ° V2: Termina la partita
+        ° V3: Stampo il conteggio
+    : ALTRIMENTI 
+        °F1: la cella cliccata si colora di azzurro
+        °F2: Aumento il punteggio
+
+    ? SE il giocatore raggiunge il numero massimo di celle cliccabili senza bombe
+        ° V1: Termina la partita 
+        ° V2: Stampo il punteggio 
+
 */
 
 
@@ -61,6 +90,17 @@ const gridContainerEl = document.getElementById('grid-container');
 
 // - seleziono il <select> dal DOM e lo memorizzo in una variabile
 const selectModeEl = document.getElementById('mode');
+
+// - creo un array di 16 numeri casuali diversi, queste saranno le posizioni delle bombe nella griglia
+const bombs = [];
+
+// creo una variabile per il punteggio
+let points = 0;
+
+// Creo variabile per capire se ho terminato la partita
+let isFinished = false;
+
+
 
 
 // - AL CLICK del bottone: 
@@ -77,6 +117,7 @@ btnGenerateEl.addEventListener('click', function(){
     
     // - dichiaro variabile numero caselle per riga
     let casellePerRiga;
+
 
     // Bonus: Seleziono la modalità
     if(mode=='hard'){
@@ -98,23 +139,67 @@ btnGenerateEl.addEventListener('click', function(){
         // °F2: assegno alla variabile numero caselle per riga il valore di 10;
         casellePerRiga = 10;
     }
+
+
+    // Popolo l'array con le 16 bombe
+    let countBombs = 0;
+
+    // Azzero il punteggio
+    points = 0;
+
+    while(bombs.length < 16){
+        let newBomb = randomNumber(1, caselleTot);
+
+        if(!bombs.includes(newBomb)){
+            bombs.push(newBomb);
+        }
+
+        countBombs++;
+    }
+    console.log(bombs);
+
     
     // - setto la width del contenitore della griglia con la formula calc(50px * numero caselle per riga);
     gridContainerEl.style.width = `calc(80px * ${casellePerRiga})`;
 
     while(i<caselleTot){
         // memorizzo una variabile contatore
-        let count = i;
+        let selectedCell = i + 1;
 
         let cella = createSquare(i+1);
         
         // - AL CLICK della cella:
         cella.addEventListener('click', function(){
-            // - assegno all'elemento una classe che la colorerà di azzurro 
-            cella.classList.toggle('light-blue');
 
-            // - stampo in console il numero della cella cliccata
-            console.log(`Hai cliccato la cella n. ${count+1}`);
+            // ? SE il numero della cella è presente nella lista dei numeri generati
+            if(bombs.includes(selectedCell)){
+
+                // - stampo in console il numero della cella cliccata
+                console.log(`Hai cliccato la cella n. ${selectedCell}`);
+
+                // ° V1: Assegno alla cella cliccata una classe "bomb" che la colora di rosso
+                cella.classList.add('bomb');
+
+                // ° V2: Termina la partita
+                isFinished = true;
+
+                // ° V3: Stampo il conteggio
+                console.log(`Mi dispiace, hai perso, il tuo punteggio è: ${points}`)
+
+            } else {
+
+                // - stampo in console il numero della cella cliccata
+                console.log(`Hai cliccato la cella n. ${selectedCell}`);
+
+                // - assegno all'elemento una classe che la colorerà di azzurro 
+                cella.classList.add('light-blue');
+
+                points++;
+                console.log(`Punteggio attuale: ${points}`);
+            }
+
+
+
         });
 
 
@@ -124,6 +209,9 @@ btnGenerateEl.addEventListener('click', function(){
         // aggiorno il contatore per uscire dal loop
         i++;
     }
+
+
+
 });
 
 
@@ -146,4 +234,28 @@ function createSquare(text){
     newDivEl.innerText = text;
 
     return newDivEl;
+}
+
+// NUMERO CASUALE DA min A max
+/**
+ * Genera un numero random da 1 a 5
+ * @returns {number}
+ */
+function randomNumber(min, max){
+    return Math.floor(Math.random()* (max - min + 1) + min);
+}
+
+// PARI O DISPARI
+/**
+ * Controlla se il numero passato come parametro è pari o dispari
+ * se pari restituisce true, se dispari restituisce false
+ * @param {number} num
+ * @returns {boolean} true|false
+ */
+function checkEvenOdd(num){
+    if(num % 2 == 0){
+        return true;
+    } else {
+        return false;
+    }
 }
