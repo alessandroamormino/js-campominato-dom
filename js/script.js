@@ -319,8 +319,10 @@ function gameOver(layer, isLost, points, btn, text){
     // Stampo il messaggio con il punteggio
     if(isLost){
         text.innerText = `Hai perso, il tuo punteggio è ${points}`;
+        console.log(`Hai perso, il tuo punteggio è ${points}`);
     }else{
         text.innerText = `Hai vinto, il tuo punteggio è ${points}`;
+        console.log(`Hai vinto, il tuo punteggio è ${points}`);
     }
 }
 
@@ -346,7 +348,7 @@ function showBombs(arr1, arr2){
  */
 function returnCell(cell){
     // - stampo in console il numero della cella cliccata
-    console.log(`Hai cliccato la cella n. ${cell}`);
+    console.log(`Hai cliccato la cella n. ${cell.innerText}`);
 
     return cell;
 }
