@@ -124,8 +124,6 @@ const allCells = [];
 // - AL CLICK del bottone: 
 
 btnGenerateEl.addEventListener('click', function(){
-    // Svuoto la griglia
-    gridContainerEl.innerHTML = "";
 
     // inizializzo un contatore per il mio ciclo
     let i = 0;
